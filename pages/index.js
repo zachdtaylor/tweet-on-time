@@ -1,6 +1,5 @@
 import { twitterClient } from "../utils/twitter-client";
 import { Layout, PageInfo, ProfileInfo, TweetForm } from "../components/lib";
-import "twin.macro";
 
 export default function Home({ userData }) {
   return (
@@ -12,7 +11,7 @@ export default function Home({ userData }) {
   );
 }
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const result = await twitterClient.get("account/verify_credentials");
   return {
     props: {

@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import Head from "next/head";
-import "twin.macro";
+import tw from "twin.macro";
 import { useScheduleTweet } from "../utils/tweet";
 
 export const PageInfo = ({ title }) => (
@@ -33,22 +33,27 @@ export const ProfileInfo = ({ userData }) => (
   </div>
 );
 
+const redBorder = tw`border-solid border border-red-600`;
+
 export const TweetForm = () => {
-  const { register, getValues } = useForm();
+  const { register, errors, reset, handleSubmit } = useForm();
   const scheduleTweet = useScheduleTweet();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    scheduleTweet.mutate(getValues());
+  const onSubmit = (data) => {
+    scheduleTweet.mutate(data, {
+      onSuccess: () => {
+        reset();
+      },
+    });
   };
 
   return (
-    <form onSubmit={handleSubmit} tw="mt-4">
-      <label for="body" tw="hidden">
+    <form onSubmit={handleSubmit(onSubmit)} tw="mt-4">
+      <label htmlFor="body" tw="hidden">
         Tweet Content
       </label>
       <textarea
-        tw="w-full p-3"
+        css={[tw`w-full p-3`, errors.body && redBorder]}
         name="body"
         rows="6"
         placeholder="What's happening?"
@@ -56,8 +61,9 @@ export const TweetForm = () => {
       ></textarea>
       <div tw="flex flex-row mt-4">
         <div>
-          <label for="tweet-date"> Date </label>
+          <label htmlFor="tweet-date"> Date </label>
           <input
+            css={[errors.tweetDate && redBorder]}
             type="date"
             id="tweet-date"
             name="tweetDate"
@@ -65,8 +71,9 @@ export const TweetForm = () => {
           />
         </div>
         <div tw="mx-4">
-          <label for="tweet-time my-1"> Time </label>
+          <label htmlFor="tweet-time my-1"> Time </label>
           <input
+            css={[errors.tweetTime && redBorder]}
             type="time"
             id="tweet-time"
             name="tweetTime"

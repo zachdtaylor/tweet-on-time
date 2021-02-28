@@ -13,6 +13,7 @@
     "@emotion/server": "^11.0.0",
     "@emotion/styled": "^11.1.5",
     "axios": "^0.21.1",
+    "mongodb": "^3.6.4",
     "next": "10.0.7",
     "node-schedule": "^2.0.0",
     "react": "17.0.1",

@@ -86,7 +86,6 @@ input[type="time"] {
   font-size: inherit;
   color: inherit;
   background-color: #30435e;
-  border: none;
   padding: 0.5rem;
   border-radius: 10px;
 }
