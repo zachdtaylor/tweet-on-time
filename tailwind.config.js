@@ -2,7 +2,10 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        twitterblue: "#1da1f2",
+        twitterblue: {
+          light: "#0f95e8",
+          DEFAULT: "#1fa1f1",
+        },
       },
     },
   },

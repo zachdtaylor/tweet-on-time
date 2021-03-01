@@ -11,7 +11,6 @@ export default async function handler(req, res) {
     method,
   } = req;
   const db = await connectToDB();
-  await sleep(1000);
   switch (method) {
     case "DELETE":
       await db.collection("tweets").deleteOne({ _id: ObjectID(id) });

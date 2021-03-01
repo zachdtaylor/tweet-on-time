@@ -5,7 +5,7 @@ import {
   useScheduledTweets,
   useDeleteTweet,
 } from "../utils/tweet";
-import { DeleteButton, redBorder, TwitterButton } from "./lib";
+import { DeleteButton, redBorder, Spinner, TwitterButton } from "./lib";
 
 export const TweetForm = () => {
   const { register, errors, reset, handleSubmit } = useForm();
@@ -54,7 +54,9 @@ export const TweetForm = () => {
         </div>
       </div>
       <div tw="flex justify-end mt-7">
-        <TwitterButton type="submit">Schedule Tweet</TwitterButton>
+        <TwitterButton type="submit">
+          {scheduleTweet.isLoading ? <Spinner /> : "Schedule Tweet"}
+        </TwitterButton>
       </div>
     </form>
   );
@@ -77,10 +79,10 @@ const Tweet = ({ tweet }) => {
   return (
     <div tw="p-4 my-4 rounded-md bg-gray-700 opacity-80">
       <div tw="flex justify-between mb-2">
-        <h1 tw="text-xl">Tweet {tweet._id}</h1>
+        <h1 tw="text-xl">Tweet</h1>
         <p tw="text-xs">{formatDate(tweet.tweetDate, tweet.tweetTime)}</p>
       </div>
-      <p tw="mb-2">{tweet.body}</p>
+      <p tw="text-base mb-2">{tweet.body}</p>
       <div tw="flex justify-end">
         <DeleteButton onClick={() => deleteTweet.mutate(tweet._id)}>
           {deleteTweet.isLoading ? <Spinner /> : "Delete"}
