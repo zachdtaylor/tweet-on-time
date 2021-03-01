@@ -1,7 +1,16 @@
-import { useForm } from "react-hook-form";
 import Head from "next/head";
 import tw from "twin.macro";
-import { useScheduleTweet } from "../utils/tweet";
+import { FaSpinner } from "react-icons/fa";
+
+export const Spinner = () => <FaSpinner tw="animate-spin" />;
+
+const Button = tw.button`focus:outline-none`;
+
+export const TwitterButton = tw(
+  Button
+)`bg-twitterblue text-white py-3 px-8 rounded-3xl`;
+
+export const DeleteButton = tw(Button)`rounded-md bg-red-600 px-4 py-2`;
 
 export const PageInfo = ({ title }) => (
   <Head>
@@ -33,57 +42,4 @@ export const ProfileInfo = ({ userData }) => (
   </div>
 );
 
-const redBorder = tw`border-solid border border-red-600`;
-
-export const TweetForm = () => {
-  const { register, errors, reset, handleSubmit } = useForm();
-  const scheduleTweet = useScheduleTweet();
-
-  const onSubmit = (data) => {
-    scheduleTweet.mutate(data, {
-      onSuccess: () => {
-        reset();
-      },
-    });
-  };
-
-  return (
-    <form onSubmit={handleSubmit(onSubmit)} tw="mt-4">
-      <label htmlFor="body" tw="hidden">
-        Tweet Content
-      </label>
-      <textarea
-        css={[tw`w-full p-3`, errors.body && redBorder]}
-        name="body"
-        rows="6"
-        placeholder="What's happening?"
-        ref={register({ required: true })}
-      ></textarea>
-      <div tw="flex flex-row mt-4">
-        <div>
-          <label htmlFor="tweet-date"> Date </label>
-          <input
-            css={[errors.tweetDate && redBorder]}
-            type="date"
-            id="tweet-date"
-            name="tweetDate"
-            ref={register({ required: true })}
-          />
-        </div>
-        <div tw="mx-4">
-          <label htmlFor="tweet-time my-1"> Time </label>
-          <input
-            css={[errors.tweetTime && redBorder]}
-            type="time"
-            id="tweet-time"
-            name="tweetTime"
-            ref={register({ required: true })}
-          />
-        </div>
-      </div>
-      <div tw="mt-7 float-right">
-        <input type="submit" value="Schedule Tweet" className="btn" />
-      </div>
-    </form>
-  );
-};
+export const redBorder = tw`border-solid border border-red-600`;

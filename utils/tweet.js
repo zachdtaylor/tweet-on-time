@@ -1,6 +1,26 @@
-import { useMutation } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { client } from "./api-client";
 
 export const useScheduleTweet = () => {
-  return useMutation((data) => client("/api/tweet", { data }));
+  const queryClient = useQueryClient();
+  return useMutation((data) => client("/api/tweet", { data }), {
+    onSuccess: () => {
+      queryClient.invalidateQueries("scheduled-tweets");
+    },
+  });
+};
+
+export const useDeleteTweet = () => {
+  const queryClient = useQueryClient();
+  return useMutation((id) => client(`/api/tweet/${id}`, { method: "DELETE" }), {
+    onSuccess: () => {
+      queryClient.invalidateQueries("scheduled-tweets");
+    },
+  });
+};
+
+export const useScheduledTweets = () => {
+  return useQuery("scheduled-tweets", () => client("/api/tweet"), {
+    placeholderData: [],
+  });
 };

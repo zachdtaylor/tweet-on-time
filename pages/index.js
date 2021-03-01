@@ -1,5 +1,6 @@
 import { twitterClient } from "../utils/twitter-client";
-import { Layout, PageInfo, ProfileInfo, TweetForm } from "../components/lib";
+import { ScheduledTweets, TweetForm } from "../components/tweets";
+import { Layout, PageInfo, ProfileInfo } from "../components/lib";
 
 export default function Home({ userData }) {
   return (
@@ -7,6 +8,7 @@ export default function Home({ userData }) {
       <PageInfo title="Tweet on Time" />
       <ProfileInfo userData={userData} />
       <TweetForm />
+      <ScheduledTweets />
     </Layout>
   );
 }
