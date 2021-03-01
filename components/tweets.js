@@ -1,3 +1,4 @@
+import React from "react";
 import { useForm } from "react-hook-form";
 import tw from "twin.macro";
 import {
@@ -5,13 +6,35 @@ import {
   useScheduledTweets,
   useDeleteTweet,
 } from "../utils/tweet";
+import { range } from "../utils/misc";
 import { DeleteButton, redBorder, Spinner, TwitterButton } from "./lib";
 
-export const TweetForm = () => {
+const TweetBody = ({ threadPos, form }) => {
   const limit = 280;
-  const { register, errors, reset, handleSubmit, watch } = useForm();
-  const watchBody = watch("body", "");
+  const watchBody = form.watch(`body${threadPos ?? ""}`);
+  return (
+    <div tw="my-4">
+      <textarea
+        css={[tw`w-full p-3 resize-none`, form.errors.body && redBorder]}
+        name={`body${threadPos ?? ""}`}
+        rows="6"
+        placeholder="What's happening?"
+        ref={form.register({ required: true, maxLength: 280 })}
+      />
+      <pre tw="flex justify-end text-xs">
+        <span css={[watchBody?.length > limit && tw`text-red-600`]}>
+          {`${watchBody?.length ?? 0} `}
+        </span>
+        / {limit} character limit
+      </pre>
+    </div>
+  );
+};
+
+export const TweetForm = () => {
+  const form = useForm();
   const scheduleTweet = useScheduleTweet();
+  const [threadLength, setThreadLength] = React.useState(0);
 
   const onSubmit = (data) => {
     scheduleTweet.mutate(data, {
@@ -22,42 +45,33 @@ export const TweetForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} tw="mt-4">
+    <form onSubmit={form.handleSubmit(onSubmit)} tw="mt-4">
       <label htmlFor="body" tw="hidden">
         Tweet Content
       </label>
-      <textarea
-        css={[tw`w-full p-3`, errors.body && redBorder]}
-        name="body"
-        rows="6"
-        placeholder="What's happening?"
-        ref={register({ required: true, maxLength: 280 })}
-      ></textarea>
-      <pre tw="flex justify-end text-xs">
-        <span css={[watchBody.length > limit && tw`text-red-600`]}>
-          {`${watchBody.length} `}
-        </span>
-        / {limit} character limit
-      </pre>
+      <TweetBody form={form} />
+      {range(threadLength).map((k) => (
+        <TweetBody key={k} threadPos={k} form={form} />
+      ))}
       <div tw="flex flex-row mt-4">
         <div>
           <label htmlFor="tweet-date"> Date </label>
           <input
-            css={[errors.tweetDate && redBorder]}
+            css={[form.errors.tweetDate && redBorder]}
             type="date"
             id="tweet-date"
             name="tweetDate"
-            ref={register({ required: true })}
+            ref={form.register({ required: true })}
           />
         </div>
         <div tw="mx-4">
           <label htmlFor="tweet-time my-1"> Time </label>
           <input
-            css={[errors.tweetTime && redBorder]}
+            css={[form.errors.tweetTime && redBorder]}
             type="time"
             id="tweet-time"
             name="tweetTime"
-            ref={register({ required: true })}
+            ref={form.register({ required: true })}
           />
         </div>
       </div>
