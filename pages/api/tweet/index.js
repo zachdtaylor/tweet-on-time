@@ -16,9 +16,16 @@ const scheduleTweet = async (db, tweet) => {
   const { insertedId } = await db.collection("tweets").insertOne(tweet);
   schedule.scheduleJob(
     new Date(`${tweet.tweetDate} ${tweet.tweetTime}`),
-    () => {
-      db.collection("tweets").deleteOne({ _id: ObjectID(insertedId) });
-      // sendTweet(tweet.body);
+    async () => {
+      const tweet = await db
+        .collection("tweets")
+        .findOne({ _id: ObjectID(insertedId) });
+      if (tweet) {
+        db.collection("tweets").deleteOne({ _id: ObjectID(tweet._id) });
+        sendTweet(tweet.body);
+      } else {
+        console.log(`tweet ${insertedId} not found, not sending tweet`);
+      }
     }
   );
 };

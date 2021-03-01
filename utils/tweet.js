@@ -22,5 +22,6 @@ export const useDeleteTweet = () => {
 export const useScheduledTweets = () => {
   return useQuery("scheduled-tweets", () => client("/api/tweet"), {
     placeholderData: [],
+    refetchInterval: 1000 * 30,
   });
 };
