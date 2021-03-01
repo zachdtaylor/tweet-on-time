@@ -8,7 +8,9 @@ import {
 import { DeleteButton, redBorder, Spinner, TwitterButton } from "./lib";
 
 export const TweetForm = () => {
-  const { register, errors, reset, handleSubmit } = useForm();
+  const limit = 280;
+  const { register, errors, reset, handleSubmit, watch } = useForm();
+  const watchBody = watch("body", "");
   const scheduleTweet = useScheduleTweet();
 
   const onSubmit = (data) => {
@@ -29,8 +31,14 @@ export const TweetForm = () => {
         name="body"
         rows="6"
         placeholder="What's happening?"
-        ref={register({ required: true })}
+        ref={register({ required: true, maxLength: 280 })}
       ></textarea>
+      <pre tw="flex justify-end text-xs">
+        <span css={[watchBody.length > limit && tw`text-red-600`]}>
+          {`${watchBody.length} `}
+        </span>
+        / {limit} character limit
+      </pre>
       <div tw="flex flex-row mt-4">
         <div>
           <label htmlFor="tweet-date"> Date </label>
