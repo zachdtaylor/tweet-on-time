@@ -89,7 +89,6 @@ export const TweetForm = () => {
     scheduleTweet.mutate(data, {
       onSuccess: () => {
         form.reset();
-        form.setValue("body", "");
         setThreadLength(0);
       },
     });
