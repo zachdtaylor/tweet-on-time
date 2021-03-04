@@ -1,6 +1,7 @@
 import { twitterClient } from "../utils/twitter-client";
-import { ScheduledTweets, TweetForm } from "../components/tweets";
+import { TweetForm } from "../components/tweet-form";
 import { Layout, PageInfo, ProfileInfo } from "../components/lib";
+import { ScheduledTweets } from "../components/scheduled-tweets";
 
 export default function Home({ userData }) {
   return (
