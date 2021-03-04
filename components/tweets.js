@@ -1,32 +1,81 @@
 import React from "react";
-import { useForm } from "react-hook-form";
-import tw from "twin.macro";
+import { useForm, Controller } from "react-hook-form";
+import tw, { css } from "twin.macro";
+import { MdClose } from "react-icons/md";
 import {
   useScheduleTweet,
   useScheduledTweets,
   useDeleteTweet,
 } from "../utils/tweet";
 import { range } from "../utils/misc";
-import { DeleteButton, redBorder, Spinner, TwitterButton } from "./lib";
+import {
+  DeleteButton,
+  redBorder,
+  Spinner,
+  TwitterButton,
+  CircleButton,
+} from "./lib";
 
-const TweetBody = ({ threadPos, form }) => {
+const stylesCloseButton = [
+  tw`cursor-pointer p-1 transition duration-200 rounded-full`,
+  css`
+    &:hover {
+      background: rgb(31, 161, 241, 0.2);
+    }
+  `,
+];
+
+const TweetBody = ({ thread, threadPos, form, setThreadLength }) => {
   const limit = 280;
-  const watchBody = form.watch(`body${threadPos ?? ""}`);
+  const name = thread ? `thread[${threadPos}].body` : "body";
+  const watchBody = form.watch(name);
   return (
-    <div tw="my-4">
-      <textarea
-        css={[tw`w-full p-3 resize-none`, form.errors.body && redBorder]}
-        name={`body${threadPos ?? ""}`}
-        rows="6"
-        placeholder="What's happening?"
-        ref={form.register({ required: true, maxLength: 280 })}
-      />
-      <pre tw="flex justify-end text-xs">
-        <span css={[watchBody?.length > limit && tw`text-red-600`]}>
-          {`${watchBody?.length ?? 0} `}
-        </span>
-        / {limit} character limit
-      </pre>
+    <div tw="my-6">
+      <div
+        css={[
+          tw`flex bg-slategray mb-2 rounded-md`,
+          form.errors[name] && redBorder,
+        ]}
+      >
+        <Controller
+          control={form.control}
+          name={name}
+          rules={{ required: true, maxLength: 280 }}
+          defaultValue=""
+          render={({ onChange, ref }) => (
+            <div
+              tw="w-full h-44 p-4 focus:outline-none"
+              contentEditable={true}
+              onInput={(e) => onChange(e.currentTarget.textContent)}
+              ref={ref}
+            ></div>
+          )}
+        />
+        {thread && (!watchBody || watchBody.length === 0) && (
+          <div tw="flex pt-2 pr-2 justify-end text-white">
+            <MdClose
+              css={stylesCloseButton}
+              size={36}
+              onClick={() => setThreadLength((l) => Math.max(l - 1, 0))}
+            />
+          </div>
+        )}
+      </div>
+      <div tw="flex justify-between">
+        <pre tw="pl-3 text-xs">
+          <span css={[watchBody?.length > limit && tw`text-red-600`]}>
+            {`${watchBody?.length ?? 0} `}
+          </span>
+          / {limit} character limit
+        </pre>
+        <CircleButton
+          tw="mr-2"
+          role="button"
+          onClick={() => setThreadLength((l) => l + 1)}
+        >
+          +
+        </CircleButton>
+      </div>
     </div>
   );
 };
@@ -39,7 +88,9 @@ export const TweetForm = () => {
   const onSubmit = (data) => {
     scheduleTweet.mutate(data, {
       onSuccess: () => {
-        reset();
+        form.reset();
+        form.setValue("body", "");
+        setThreadLength(0);
       },
     });
   };
@@ -49,9 +100,15 @@ export const TweetForm = () => {
       <label htmlFor="body" tw="hidden">
         Tweet Content
       </label>
-      <TweetBody form={form} />
+      <TweetBody form={form} setThreadLength={setThreadLength} />
       {range(threadLength).map((k) => (
-        <TweetBody key={k} threadPos={k} form={form} />
+        <TweetBody
+          key={k}
+          thread={true}
+          threadPos={k}
+          form={form}
+          setThreadLength={setThreadLength}
+        />
       ))}
       <div tw="flex flex-row mt-4">
         <div>
@@ -84,6 +141,10 @@ export const TweetForm = () => {
   );
 };
 
+const TweetBodyPreview = tw.p`
+  text-base mb-2 bg-gray-200 bg-opacity-10 p-2 rounded-md
+`;
+
 const Tweet = ({ tweet }) => {
   const deleteTweet = useDeleteTweet();
 
@@ -104,7 +165,12 @@ const Tweet = ({ tweet }) => {
         <h1 tw="text-xl">Tweet</h1>
         <p tw="text-xs">{formatDate(tweet.tweetDate, tweet.tweetTime)}</p>
       </div>
-      <p tw="text-base mb-2">{tweet.body}</p>
+      <div tw="grid gap-2 mb-6">
+        <TweetBodyPreview>{tweet.body}</TweetBodyPreview>
+        {tweet.thread.map((tweet) => (
+          <TweetBodyPreview>{tweet.body}</TweetBodyPreview>
+        ))}
+      </div>
       <div tw="flex justify-end">
         <DeleteButton onClick={() => deleteTweet.mutate(tweet._id)}>
           {deleteTweet.isLoading ? <Spinner /> : "Delete"}

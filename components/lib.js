@@ -1,10 +1,19 @@
 import Head from "next/head";
-import tw from "twin.macro";
+import tw, { styled, css } from "twin.macro";
 import { FaSpinner } from "react-icons/fa";
 
 export const Spinner = () => <FaSpinner tw="animate-spin" />;
 
 const Button = tw.button`font-bold transition duration-200 focus:outline-none`;
+
+export const CircleButton = styled.a(() => [
+  tw`block h-8`,
+  tw`border-2 border-twitterblue rounded-3xl`,
+  tw`text-xl text-twitterblue`,
+  css`
+    padding: 0 0.6rem 1.9rem;
+  `,
+]);
 
 export const TwitterButton = tw(
   Button
@@ -44,4 +53,4 @@ export const ProfileInfo = ({ userData }) => (
   </div>
 );
 
-export const redBorder = tw`border-solid border border-red-600`;
+export const redBorder = tw`border-solid border-2 border-red-600`;
