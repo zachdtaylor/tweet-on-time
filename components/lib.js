@@ -1,19 +1,31 @@
 import Head from "next/head";
 import tw, { styled, css } from "twin.macro";
 import { FaSpinner } from "react-icons/fa";
+import { MdClose } from "react-icons/md";
 
 export const Spinner = () => <FaSpinner tw="animate-spin" />;
 
 const Button = tw.button`font-bold transition duration-200 focus:outline-none`;
 
-export const CircleButton = styled.a(() => [
-  tw`block h-8`,
-  tw`border-2 border-twitterblue rounded-3xl`,
-  tw`text-xl text-twitterblue`,
-  css`
-    padding: 0 0.6rem 1.9rem;
-  `,
-]);
+export const AddButton = ({ onClick }) => (
+  <a
+    role="button"
+    onClick={onClick}
+    css={[
+      tw`block h-8 transition duration-200`,
+      tw`border-2 border-twitterblue rounded-full`,
+      tw`text-xl text-twitterblue`,
+      css`
+        padding: 0 0.6rem 1.9rem;
+        &:hover {
+          background: rgb(31, 161, 241, 0.2);
+        }
+      `,
+    ]}
+  >
+    +
+  </a>
+);
 
 export const TwitterButton = tw(
   Button
@@ -22,6 +34,21 @@ export const TwitterButton = tw(
 export const DeleteButton = tw(
   Button
 )`rounded-md bg-red-600 px-4 py-2 hover:bg-red-700`;
+
+export const CloseButton = ({ onClick }) => (
+  <MdClose
+    css={[
+      tw`cursor-pointer p-1 transition duration-200 rounded-full`,
+      css`
+        &:hover {
+          background: rgb(31, 161, 241, 0.2);
+        }
+      `,
+    ]}
+    size={36}
+    onClick={onClick}
+  />
+);
 
 export const PageInfo = ({ title }) => (
   <Head>

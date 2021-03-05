@@ -1,22 +1,18 @@
 import React from "react";
 import { Controller } from "react-hook-form";
-import tw, { css } from "twin.macro";
-import { MdClose } from "react-icons/md";
+import tw from "twin.macro";
 import { useScheduleTweet } from "../utils/tweet";
 import { range } from "../utils/misc";
-import { redBorder, Spinner, TwitterButton, CircleButton } from "./lib";
+import {
+  redBorder,
+  Spinner,
+  TwitterButton,
+  AddButton,
+  CloseButton,
+} from "./lib";
 import { TweetFormProvider, useTweetForm } from "../context/tweet-form-context";
 
-const stylesCloseButton = [
-  tw`cursor-pointer p-1 transition duration-200 rounded-full`,
-  css`
-    &:hover {
-      background: rgb(31, 161, 241, 0.2);
-    }
-  `,
-];
-
-const TweetBody = ({ length, children }) => {
+const TweetControls = ({ bodyLength, children, showAddButton }) => {
   const limit = 280;
   const { setThreadLength } = useTweetForm();
   return (
@@ -24,45 +20,48 @@ const TweetBody = ({ length, children }) => {
       {children}
       <div tw="flex justify-between">
         <pre tw="pl-3 text-xs">
-          <span css={[length > limit && tw`text-red-600`]}>
-            {`${length ?? 0} `}
+          <span css={[bodyLength > limit && tw`text-red-600`]}>
+            {`${bodyLength ?? 0} `}
           </span>
           / {limit} character limit
         </pre>
-        <CircleButton
-          tw="mr-2"
-          role="button"
-          onClick={() => setThreadLength((l) => l + 1)}
-        >
-          +
-        </CircleButton>
+        {bodyLength > 0 && showAddButton && (
+          <div tw="mr-2">
+            <AddButton onClick={() => setThreadLength((l) => l + 1)} />
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
 const MainTweetBody = () => {
-  const { form } = useTweetForm();
+  const { form, threadLength } = useTweetForm();
   const watchBody = form.watch("body");
   return (
-    <TweetBody length={watchBody?.length}>
+    <TweetControls
+      bodyLength={watchBody?.length}
+      showAddButton={threadLength === 0}
+    >
       <textarea
         name="body"
         tw="w-full h-44 p-4 resize-none"
         placeholder="What's happening?"
         ref={form.register({ required: true, maxLength: 280 })}
       />
-    </TweetBody>
+    </TweetControls>
   );
 };
 
 const ThreadBody = ({ threadPos }) => {
-  const { form } = useTweetForm();
+  const { form, threadLength, setThreadLength } = useTweetForm();
   const name = `thread[${threadPos}].body`;
   const watchThreadBody = form.watch(name);
-  const { setThreadLength } = useTweetForm();
   return (
-    <TweetBody length={watchThreadBody?.length}>
+    <TweetControls
+      bodyLength={watchThreadBody?.length}
+      showAddButton={threadLength === threadPos + 1}
+    >
       <div
         css={[
           tw`flex bg-slategray mb-2 rounded-md`,
@@ -84,16 +83,14 @@ const ThreadBody = ({ threadPos }) => {
           )}
         />
         {(!watchThreadBody || watchThreadBody.length === 0) && (
-          <div tw="flex pt-2 pr-2 justify-end text-white">
-            <MdClose
-              css={stylesCloseButton}
-              size={36}
+          <div tw="flex pt-2 pr-2 justify-end">
+            <CloseButton
               onClick={() => setThreadLength((l) => Math.max(l - 1, 0))}
             />
           </div>
         )}
       </div>
-    </TweetBody>
+    </TweetControls>
   );
 };
 

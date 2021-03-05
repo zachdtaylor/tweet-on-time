@@ -46,7 +46,7 @@ export const ScheduledTweets = () => {
 
   return (
     <div tw="my-8">
-      {scheduledTweets.data.length ? (
+      {scheduledTweets.data?.length ? (
         scheduledTweets.data.map((tweet) => (
           <Tweet key={tweet._id} tweet={tweet} />
         ))

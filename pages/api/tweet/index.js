@@ -3,13 +3,23 @@ import schedule from "node-schedule";
 import { connectToDB } from "../../../utils/db";
 import { twitterClient } from "../../../utils/twitter-client";
 
-const sendTweet = (body) => {
-  return twitterClient
-    .post("statuses/update", {
+const sendTweet = async ({ body, thread }) => {
+  try {
+    const tweet = await twitterClient.post("statuses/update", {
       status: body,
-    })
-    .then((data) => console.log(data))
-    .catch((error) => console.log(error));
+    });
+    let lastTweetID = tweet.id_str;
+    for (const status of thread ?? []) {
+      const result = await twitterClient.post("statuses/update", {
+        status: status.body,
+        in_reply_to_status_id: lastTweetID,
+        auto_populate_reply_metadata: true,
+      });
+      lastTweetID = result.id_str;
+    }
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const scheduleTweet = async (db, tweet) => {
@@ -22,7 +32,7 @@ const scheduleTweet = async (db, tweet) => {
         .findOne({ _id: ObjectID(insertedId) });
       if (tweet) {
         db.collection("tweets").deleteOne({ _id: ObjectID(tweet._id) });
-        sendTweet(tweet.body);
+        sendTweet(tweet);
       } else {
         console.log(`tweet ${insertedId} not found, not sending tweet`);
       }
