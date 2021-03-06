@@ -1,10 +1,6 @@
 import { ObjectID } from "mongodb";
 import { connectToDB } from "../../../utils/db";
 
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 export default async function handler(req, res) {
   const {
     query: { id },
