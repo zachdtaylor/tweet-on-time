@@ -10,11 +10,17 @@ import {
   AddButton,
   CloseButton,
 } from "./lib";
-import { TweetFormProvider, useTweetForm } from "../context/tweet-form-context";
+import {
+  ThreadLengthProvider,
+  TweetFormProvider,
+  useThreadLength,
+  useTweetForm,
+} from "../context/tweet-form-context";
 
 const TweetControls = ({ bodyLength, children, showAddButton }) => {
   const limit = 280;
-  const { setThreadLength } = useTweetForm();
+  const [_, dispatchThreadLength] = useThreadLength();
+  console.log("TweetControls called");
   return (
     <div tw="my-6">
       {children}
@@ -27,7 +33,7 @@ const TweetControls = ({ bodyLength, children, showAddButton }) => {
         </pre>
         {bodyLength > 0 && showAddButton && (
           <div tw="mr-2">
-            <AddButton onClick={() => setThreadLength((l) => l + 1)} />
+            <AddButton onClick={() => dispatchThreadLength("INCREMENT")} />
           </div>
         )}
       </div>
@@ -36,12 +42,14 @@ const TweetControls = ({ bodyLength, children, showAddButton }) => {
 };
 
 const MainTweetBody = () => {
-  const { form, threadLength } = useTweetForm();
+  const { form } = useTweetForm();
+  const [threadLength] = useThreadLength();
   const watchBody = form.watch("body");
+  console.log("MainTweetBody called");
   return (
     <TweetControls
       bodyLength={watchBody?.length}
-      showAddButton={threadLength === 0}
+      showAddButton={threadLength.state === "ZERO"}
     >
       <textarea
         name="body"
@@ -54,13 +62,15 @@ const MainTweetBody = () => {
 };
 
 const ThreadBody = ({ threadPos }) => {
-  const { form, threadLength, setThreadLength } = useTweetForm();
+  const { form } = useTweetForm();
+  const [threadLength, dispatchThreadLength] = useThreadLength();
   const name = `thread[${threadPos}].body`;
   const watchThreadBody = form.watch(name);
+  console.log("ThreadBody called");
   return (
     <TweetControls
       bodyLength={watchThreadBody?.length}
-      showAddButton={threadLength === threadPos + 1}
+      showAddButton={threadLength.value === threadPos + 1}
     >
       <div
         css={[
@@ -84,9 +94,7 @@ const ThreadBody = ({ threadPos }) => {
         />
         {(!watchThreadBody || watchThreadBody.length === 0) && (
           <div tw="flex pt-2 pr-2 justify-end">
-            <CloseButton
-              onClick={() => setThreadLength((l) => Math.max(l - 1, 0))}
-            />
+            <CloseButton onClick={() => dispatchThreadLength("DECREMENT")} />
           </div>
         )}
       </div>
@@ -95,11 +103,13 @@ const ThreadBody = ({ threadPos }) => {
 };
 
 const TweetThread = () => {
-  const { form, threadLength } = useTweetForm();
+  const { form } = useTweetForm();
+  const [threadLength] = useThreadLength();
+  console.log("TweetThread called");
   return (
     <>
       <MainTweetBody form={form} />
-      {range(threadLength).map((k) => (
+      {range(threadLength.value).map((k) => (
         <ThreadBody key={k} threadPos={k} form={form} />
       ))}
     </>
@@ -108,6 +118,7 @@ const TweetThread = () => {
 
 const DateAndTime = () => {
   const { form } = useTweetForm();
+  console.log("DateAndTime called");
   return (
     <div tw="flex flex-row mt-4">
       <div>
@@ -144,13 +155,14 @@ const ScheduleTweetButton = ({ isLoading }) => (
 
 const TweetFormConsumer = () => {
   const scheduleTweet = useScheduleTweet();
-  const { setThreadLength, form } = useTweetForm();
-
+  const { form } = useTweetForm();
+  const [_, dispatchThreadLength] = useThreadLength();
+  console.log("TweetFormConsumer called");
   const onSubmit = (data) => {
     scheduleTweet.mutate(data, {
       onSuccess: () => {
         form.reset();
-        setThreadLength(0);
+        dispatchThreadLength("RESET");
       },
     });
   };
@@ -169,6 +181,8 @@ const TweetFormConsumer = () => {
 
 export const TweetForm = () => (
   <TweetFormProvider>
-    <TweetFormConsumer />
+    <ThreadLengthProvider>
+      <TweetFormConsumer />
+    </ThreadLengthProvider>
   </TweetFormProvider>
 );
