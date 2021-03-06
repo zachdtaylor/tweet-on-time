@@ -20,7 +20,6 @@ import {
 const TweetControls = ({ bodyLength, children, showAddButton }) => {
   const limit = 280;
   const [_, dispatchThreadLength] = useThreadLength();
-  console.log("TweetControls called");
   return (
     <div tw="my-6">
       {children}
@@ -45,7 +44,6 @@ const MainTweetBody = () => {
   const { form } = useTweetForm();
   const [threadLength] = useThreadLength();
   const watchBody = form.watch("body");
-  console.log("MainTweetBody called");
   return (
     <TweetControls
       bodyLength={watchBody?.length}
@@ -66,7 +64,6 @@ const ThreadBody = ({ threadPos }) => {
   const [threadLength, dispatchThreadLength] = useThreadLength();
   const name = `thread[${threadPos}].body`;
   const watchThreadBody = form.watch(name);
-  console.log("ThreadBody called");
   return (
     <TweetControls
       bodyLength={watchThreadBody?.length}
@@ -105,7 +102,6 @@ const ThreadBody = ({ threadPos }) => {
 const TweetThread = () => {
   const { form } = useTweetForm();
   const [threadLength] = useThreadLength();
-  console.log("TweetThread called");
   return (
     <>
       <MainTweetBody form={form} />
@@ -118,7 +114,6 @@ const TweetThread = () => {
 
 const DateAndTime = () => {
   const { form } = useTweetForm();
-  console.log("DateAndTime called");
   return (
     <div tw="flex flex-row mt-4">
       <div>
@@ -157,7 +152,7 @@ const TweetFormConsumer = () => {
   const scheduleTweet = useScheduleTweet();
   const { form } = useTweetForm();
   const [_, dispatchThreadLength] = useThreadLength();
-  console.log("TweetFormConsumer called");
+
   const onSubmit = (data) => {
     scheduleTweet.mutate(data, {
       onSuccess: () => {
