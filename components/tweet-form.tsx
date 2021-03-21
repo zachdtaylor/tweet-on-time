@@ -1,4 +1,3 @@
-import React from "react";
 import { Controller } from "react-hook-form";
 import tw from "twin.macro";
 import { useScheduleTweet } from "../utils/tweet";
@@ -104,9 +103,9 @@ const TweetThread = () => {
   const [threadLength] = useThreadLength();
   return (
     <>
-      <MainTweetBody form={form} />
+      <MainTweetBody />
       {range(threadLength.value).map((k) => (
-        <ThreadBody key={k} threadPos={k} form={form} />
+        <ThreadBody key={k} threadPos={k} />
       ))}
     </>
   );
