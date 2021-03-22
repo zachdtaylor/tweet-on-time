@@ -31,7 +31,7 @@ const TweetControls = ({ bodyLength, children, showAddButton }) => {
         </pre>
         {bodyLength > 0 && showAddButton && (
           <div tw="mr-2">
-            <AddButton onClick={() => dispatchThreadLength("INCREMENT")} />
+            <AddButton onClick={() => dispatchThreadLength("increment")} />
           </div>
         )}
       </div>
@@ -46,7 +46,7 @@ const MainTweetBody = () => {
   return (
     <TweetControls
       bodyLength={watchBody?.length}
-      showAddButton={threadLength.state === "ZERO"}
+      showAddButton={threadLength.state === "zero"}
     >
       <textarea
         name="body"
@@ -90,7 +90,7 @@ const ThreadBody = ({ threadPos }) => {
         />
         {(!watchThreadBody || watchThreadBody.length === 0) && (
           <div tw="flex pt-2 pr-2 justify-end">
-            <CloseButton onClick={() => dispatchThreadLength("DECREMENT")} />
+            <CloseButton onClick={() => dispatchThreadLength("decrement")} />
           </div>
         )}
       </div>
@@ -99,7 +99,6 @@ const ThreadBody = ({ threadPos }) => {
 };
 
 const TweetThread = () => {
-  const { form } = useTweetForm();
   const [threadLength] = useThreadLength();
   return (
     <>
@@ -156,7 +155,7 @@ const TweetFormConsumer = () => {
     scheduleTweet.mutate(data, {
       onSuccess: () => {
         form.reset();
-        dispatchThreadLength("RESET");
+        dispatchThreadLength("reset");
       },
     });
   };

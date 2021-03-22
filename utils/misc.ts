@@ -1,3 +1,3 @@
-export const range = (length) => {
+export const range = (length: number) => {
   return Array.from(Array(length).keys());
 };

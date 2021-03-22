@@ -1,6 +1,8 @@
+import type { Dispatch } from 'react'
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { nonNegativeIntegerReducer } from '../state/reducers';
+import { NonNegativeIntEvent, NonNegativeIntState } from '../types';
 
 const TweetFormContext = React.createContext(null);
 
@@ -18,11 +20,13 @@ export const useTweetForm = () => {
   return context;
 };
 
-const ThreadLengthContext = React.createContext(null);
+type ThreadLength = [NonNegativeIntState, Dispatch<NonNegativeIntEvent>]
+
+const ThreadLengthContext = React.createContext<ThreadLength>(null);
 
 export const ThreadLengthProvider = (props) => {
   const threadLengthReducer = React.useReducer(nonNegativeIntegerReducer, {
-    state: 'ZERO',
+    state: 'zero',
     value: 0,
   });
   return <ThreadLengthContext.Provider value={threadLengthReducer} {...props} />;

@@ -1,10 +1,10 @@
 import type { APIClientConfig } from '../types';
+import type { Method } from 'axios';
 import axios from 'axios';
 
-async function client(endpoint, clientConfig: APIClientConfig | {} = {}) {
-  const { data, ...customConfig } = clientConfig as APIClientConfig;
+async function client<T>(endpoint, { data, ...customConfig }: APIClientConfig = {}) {
   const config = {
-    method: data ? 'POST' : 'GET',
+    method: (data ? 'POST' : 'GET') as Method,
     baseURL: process.env.API_URL,
     url: endpoint,
     headers: {
@@ -14,7 +14,7 @@ async function client(endpoint, clientConfig: APIClientConfig | {} = {}) {
     ...customConfig,
   };
   const response = await axios(config);
-  return response.data;
+  return response.data as T;
 }
 
 export { client };

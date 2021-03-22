@@ -1,24 +1,36 @@
-const transition = (state, event, transitions) => {
-  const type = typeof event === "string" ? event : event.type;
-  return transitions[state.state][type]
-    ? transitions[state.state][type](event, state)
+import type {
+  NonNegativeIntEvent,
+  NonNegativeIntState,
+  NonNegativeIntTransitionConfig,
+} from '../types';
+
+const transition = (
+  state: NonNegativeIntState,
+  event: NonNegativeIntEvent,
+  transitions: NonNegativeIntTransitionConfig
+): NonNegativeIntState => {
+  return transitions[state.state][event]
+    ? transitions[state.state][event](event, state)
     : state;
 };
 
-export const nonNegativeIntegerReducer = (integer, event) =>
+export const nonNegativeIntegerReducer = (
+  integer: NonNegativeIntState,
+  event: NonNegativeIntEvent
+): NonNegativeIntState =>
   transition(integer, event, {
-    POSITIVE: {
-      INCREMENT: (_, integer) => ({
-        state: "POSITIVE",
+    positive: {
+      increment: (_, integer) => ({
+        state: 'positive',
         value: integer.value + 1,
       }),
-      DECREMENT: (_, integer) => ({
-        state: integer.value === 1 ? "ZERO" : "POSITIVE",
+      decrement: (_, integer) => ({
+        state: integer.value === 1 ? 'zero' : 'positive',
         value: integer.value - 1,
       }),
-      RESET: () => ({ state: "ZERO", value: 0 }),
+      reset: () => ({ state: 'zero', value: 0 }),
     },
-    ZERO: {
-      INCREMENT: () => ({ state: "POSITIVE", value: 1 }),
+    zero: {
+      increment: () => ({ state: 'positive', value: 1 }),
     },
   });
