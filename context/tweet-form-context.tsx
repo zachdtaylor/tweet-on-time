@@ -1,15 +1,15 @@
 import type { Dispatch } from 'react'
+import {FieldValues, UseFormMethods} from 'react-hook-form'
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { nonNegativeIntegerReducer } from '../state/reducers';
 import { NonNegativeIntEvent, NonNegativeIntState } from '../types';
 
-const TweetFormContext = React.createContext(null);
+const TweetFormContext = React.createContext<UseFormMethods<FieldValues>>(null);
 
 export const TweetFormProvider = (props) => {
   const form = useForm();
-  const value = { form };
-  return <TweetFormContext.Provider value={value} {...props} />;
+  return <TweetFormContext.Provider value={form} {...props} />;
 };
 
 export const useTweetForm = () => {

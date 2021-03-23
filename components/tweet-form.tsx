@@ -40,7 +40,7 @@ const TweetControls = ({ bodyLength, children, showAddButton }) => {
 };
 
 const MainTweetBody = () => {
-  const { form } = useTweetForm();
+  const form = useTweetForm();
   const [threadLength] = useThreadLength();
   const watchBody = form.watch("body");
   return (
@@ -59,7 +59,7 @@ const MainTweetBody = () => {
 };
 
 const ThreadBody = ({ threadPos }) => {
-  const { form } = useTweetForm();
+  const form = useTweetForm();
   const [threadLength, dispatchThreadLength] = useThreadLength();
   const name = `thread[${threadPos}].body`;
   const watchThreadBody = form.watch(name);
@@ -111,7 +111,7 @@ const TweetThread = () => {
 };
 
 const DateAndTime = () => {
-  const { form } = useTweetForm();
+  const form = useTweetForm();
   return (
     <div tw="flex flex-row mt-4">
       <div>
@@ -148,7 +148,7 @@ const ScheduleTweetButton = ({ isLoading }) => (
 
 const TweetFormConsumer = () => {
   const scheduleTweet = useScheduleTweet();
-  const { form } = useTweetForm();
+  const form = useTweetForm();
   const [_, dispatchThreadLength] = useThreadLength();
 
   const onSubmit = (data) => {

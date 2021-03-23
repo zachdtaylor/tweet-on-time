@@ -4,16 +4,19 @@ import { client } from './api-client';
 
 export const useScheduleTweet = () => {
   const queryClient = useQueryClient();
-  return useMutation<APIResponse>((data) => client('/api/tweet', { data }), {
-    onSuccess: () => {
-      queryClient.invalidateQueries('scheduled-tweets');
-    },
-  });
+  return useMutation<APIResponse, unknown, Tweet>(
+    (data) => client('/api/tweet', { data }),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('scheduled-tweets');
+      },
+    }
+  );
 };
 
 export const useDeleteTweet = () => {
   const queryClient = useQueryClient();
-  return useMutation<APIResponse>(
+  return useMutation<APIResponse, unknown, string>(
     (id) => client(`/api/tweet/${id}`, { method: 'DELETE' }),
     {
       onSuccess: () => {
